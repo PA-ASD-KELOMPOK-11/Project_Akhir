@@ -1,5 +1,6 @@
 import time 
 import os
+from prettytable import PrettyTable
 os.system ("cls")
 
 class daftar:
@@ -60,6 +61,19 @@ class databos:
                 cardatanow = cardatanow.next
         return False
     
+    def search(self, keyword):
+        table = PrettyTable()
+        table.field_names = ["mobil", "peminjam"]
+        rental = self.head
+        while rental:
+            if keyword.lower() in rental.mobil.lower() or keyword.lower() in rental.peminjam.lower():
+                table.add_row([rental.mobil, rental.peminjam])
+            rental = rental.next
+        if len(table._rows) == 0:
+            print("data tidak ditemukan")
+        else:
+            print(table)
+    
     def history (self):
         print ("==Riwayat Data Peminjaman Mobil==")
         
@@ -78,7 +92,7 @@ def loguser():
 
 if loguser():
     while True:
-        os.system ("cls")
+        
         print ("=================================")
         print ("||||>>>=== 11 Rent Car ===<<<||||")    
         print ("=================================")
@@ -86,7 +100,8 @@ if loguser():
         print ("2. Tampilkan Data Rental")
         print ("3. Hapus Data Rental")
         print ("4. Riwayat Peminjaman Mobil")
-        print ("5. Keluar")
+        print ("5. cari ")
+        print ("6. Keluar")
         print ("=================================")
         pilih = input ("Masukkan Pilihan : ")
         if pilih == "1":
@@ -109,6 +124,10 @@ if loguser():
             rentcar.history()
             input ("=================================")
         elif pilih == "5":
+            cari = input("cari :")
+            rentcar.search(cari)
+
+        elif pilih == "6":
             break
         else:
             print ("Pilihan Salah")
