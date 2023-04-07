@@ -54,13 +54,21 @@ class databos:
     
     def carlist (self):
         table = PrettyTable()
-        table.field_names = ["ID", "Mobil", "Peminjam", "Tanggal", "Bulan", "Tahun"]
+        table.field_names = ["ID", "Peminjam", "Mobil", "Tanggal", "Bulan", "Tahun"]
         carlist = self.head
         while carlist:
             table.add_row([carlist.id, carlist.peminjam, carlist.mobil, carlist.tanggal, carlist.bulan, carlist.tahun])
             carlist = carlist.next
         print (table)
-    
+
+    def carlist2 (self):
+        table = PrettyTable()
+        table.field_names = ["ID", "Peminjam", "Mobil","paket", "Tanggal pinjam", "tanggal kembali"]
+        carlist = self.head
+        while carlist:
+            table.add_row([carlist.id, carlist.peminjam, carlist.mobil, carlist.tanggal, carlist.bulan, carlist.tahun])
+            carlist = carlist.next
+        print (table)
     def deletecardata (self, mobil):
         cardatanow = self.head
         previouscardata = None
@@ -83,30 +91,29 @@ class databos:
     
     def search(self, keyword):
         table = PrettyTable()
-        table.field_names = ["ID", "Mobil", "Peminjam", "Tanggal", "Bulan", "Tahun"]
+        table.field_names = ["ID", "Peminjam", "Mobil", "Tanggal", "Bulan", "Tahun"]
         
         if self.head is None:
             print("Tidak ada data peminjaman")
             return
         
-        n = len(keyword)
-        step = int(n ** 0.5)
-        
+        step = int(len(self.riwayat) ** 0.5)
         low = 0
         high = step
         
-        while high < len(self.riwayat) and keyword.lower() > self.riwayat[high].mobil.lower():
+        while high < len(self.riwayat) and keyword.lower() > self.riwayat[high].peminjam.lower():
             low = high
             high += step
-        
-        for i in range(low, high+1):
+            
+        for i in range(low, min(high+1, len(self.riwayat))):
             if keyword.lower() in self.riwayat[i].id.lower() or keyword.lower() in self.riwayat[i].mobil.lower() or keyword.lower() in self.riwayat[i].peminjam.lower():
-                table.add_row([self.riwayat[i].id, self.riwayat[i].mobil, self.riwayat[i].peminjam, self.riwayat[i].tanggal, self.riwayat[i].bulan, self.riwayat[i].tahun])
+                table.add_row([self.riwayat[i].id, self.riwayat[i].peminjam, self.riwayat[i].mobil, self.riwayat[i].tanggal, self.riwayat[i].bulan, self.riwayat[i].tahun])
         
         if len(table._rows) == 0:
             print("Data tidak ditemukan")
         else:
             print(table)
+
 
     
     def history (self):
@@ -148,6 +155,7 @@ def pembeli() :
 rentcar = databos()
 rentcar.newdata(daftar("1", "Rikad Anggoro", "Innova Reborn", "2", "April", "2023"))
 rentcar.newdata(daftar("2","Joko Susanto", "Avanza Veloz", "5", "Maret", "2023"))
+
 
 rentcar1=databos()
 rentcar1.newdata1(mobil("1","Innova Reborn"))
