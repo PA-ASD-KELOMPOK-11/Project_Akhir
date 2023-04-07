@@ -69,7 +69,7 @@ class databos:
             table.add_row([carlist.id, carlist.peminjam, carlist.mobil, carlist.tanggal, carlist.bulan, carlist.tahun])
             carlist = carlist.next
         print (table)
-        
+
     def deletecardata (self, mobil):
         cardatanow = self.head
         previouscardata = None
@@ -92,31 +92,20 @@ class databos:
     
     def search(self, keyword):
         table = PrettyTable()
-        table.field_names = ["ID", "Peminjam", "Mobil", "Tanggal", "Bulan", "Tahun"]
-        
-        if self.head is None:
-            print("Tidak ada data peminjaman")
-            return
-        
-        step = int(len(self.riwayat) ** 0.5)
-        low = 0
-        high = step
-        
-        while high < len(self.riwayat) and keyword.lower() > self.riwayat[high].peminjam.lower():
-            low = high
-            high += step
-            
-        for i in range(low, min(high+1, len(self.riwayat))):
-            if keyword.lower() in self.riwayat[i].id.lower() or keyword.lower() in self.riwayat[i].mobil.lower() or keyword.lower() in self.riwayat[i].peminjam.lower():
-                table.add_row([self.riwayat[i].id, self.riwayat[i].peminjam, self.riwayat[i].mobil, self.riwayat[i].tanggal, self.riwayat[i].bulan, self.riwayat[i].tahun])
-        
+        table.field_names = ["id","Mobil", "Peminjam","Tanggal","Bulan","Tahun"]
+        cari = self.head
+        while cari is not None:
+            if keyword.lower() in cari.id.lower() or keyword.lower() in cari.mobil.lower() or keyword.lower() in cari.peminjam.lower():
+                table.add_row([ cari.id,cari.mobil, cari.peminjam,cari.tanggal,cari.bulan,cari.tahun])
+            cari = cari.next
         if len(table._rows) == 0:
-            print("Data tidak ditemukan")
+            print("data tidak ditemukan")
         else:
             print(table)
 
 
-    
+
+
     def history (self):
         print ("==Riwayat Data Peminjaman Mobil==")
         
