@@ -42,7 +42,7 @@ class databos:
 
     def nowcardata (self):
         table = PrettyTable()
-        table.field_names = ["ID", "Mobil", "Peminjam", "Tanggal", "Bulan", "Tahun"]
+        table.field_names = ["ID", "Peminjam", "Mobil", "Tanggal", "Bulan", "Tahun"]
         if self.head is None:
             print("Tidak ada data peminjaman")
         else:
@@ -69,6 +69,7 @@ class databos:
             table.add_row([carlist.id, carlist.peminjam, carlist.mobil, carlist.tanggal, carlist.bulan, carlist.tahun])
             carlist = carlist.next
         print (table)
+        
     def deletecardata (self, mobil):
         cardatanow = self.head
         previouscardata = None
