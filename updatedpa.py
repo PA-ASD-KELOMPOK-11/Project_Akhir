@@ -4,8 +4,7 @@ from prettytable import PrettyTable
 os.system ("cls")
 
 class daftar:
-    def __init__(self, id, peminjam, mobil, tanggal, bulan, tahun):
-        self.id = id
+    def __init__(self, peminjam, mobil, tanggal, bulan, tahun):
         self.peminjam = peminjam
         self.mobil = mobil
         self.tanggal = tanggal
@@ -26,12 +25,13 @@ class databos:
         self.riwayat = []
 
     def newdata (self, rental):
-        if self.head is None:
+        if self.head == None:
             self.head = rental
+            self.tail = self.head
         else:
-            rental.next = self.head
-            self.head = rental
-        self.riwayat.append (f"Ditambahkan : {rental.mobil} (Peminjam A.N {rental.peminjam})")
+            self.tail.next = rental
+            self.tail = self.tail.next
+        self.riwayat.append(("Ditambahkan",(rental.peminjam, rental.mobil, rental.tanggal, rental.bulan, rental.tahun)))
     
     def newdata1 (self, mobil):
         if self.head is None:
@@ -43,27 +43,20 @@ class databos:
     def nowcardata (self):
         table = PrettyTable()
         table.field_names = ["ID", "Peminjam", "Mobil", "Tanggal", "Bulan", "Tahun"]
+        number = 1
         if self.head is None:
             print("Tidak ada data peminjaman")
         else:
             current = self.head
             while current is not None:
-                table.add_row([current.id, current.peminjam, current.mobil, current.tanggal, current.bulan, current.tahun])
+                table.add_row([number, current.peminjam, current.mobil, current.tanggal, current.bulan, current.tahun])
+                number += 1
                 current = current.next
             print(table)
     
     def carlist (self):
         table = PrettyTable()
         table.field_names = ["ID", "Peminjam", "Mobil", "Tanggal", "Bulan", "Tahun"]
-        carlist = self.head
-        while carlist:
-            table.add_row([carlist.id, carlist.peminjam, carlist.mobil, carlist.tanggal, carlist.bulan, carlist.tahun])
-            carlist = carlist.next
-        print (table)
-
-    def carlist2 (self):
-        table = PrettyTable()
-        table.field_names = ["ID", "Peminjam", "Mobil","paket", "Tanggal pinjam", "tanggal kembali"]
         carlist = self.head
         while carlist:
             table.add_row([carlist.id, carlist.peminjam, carlist.mobil, carlist.tanggal, carlist.bulan, carlist.tahun])
@@ -83,7 +76,7 @@ class databos:
                     self.head = cardatanow.next
                     if self.head is None:
                         self.tail = None
-                self.riwayat.append (f"Dibatalkan  : {cardatanow.mobil} (Peminjam A.N {cardatanow.peminjam})")
+                self.riwayat.append(("Dibatalkan",(cardatanow.peminjam, cardatanow.mobil, cardatanow.tanggal, cardatanow.bulan, cardatanow.tahun)))
                 return True
             else:
                 previouscardata = cardatanow
@@ -92,25 +85,25 @@ class databos:
     
     def search(self, keyword):
         table = PrettyTable()
-        table.field_names = ["id","Mobil", "Peminjam","Tanggal","Bulan","Tahun"]
+        table.field_names = ["ID","Mobil", "Peminjam","Tanggal","Bulan","Tahun"]
         cari = self.head
         while cari is not None:
             if keyword.lower() in cari.id.lower() or keyword.lower() in cari.mobil.lower() or keyword.lower() in cari.peminjam.lower():
                 table.add_row([ cari.id,cari.mobil, cari.peminjam,cari.tanggal,cari.bulan,cari.tahun])
             cari = cari.next
         if len(table._rows) == 0:
-            print("data tidak ditemukan")
+            print("Data Peminjaman Tidak Ditemukan")
         else:
             print(table)
 
-
-
-
     def history (self):
-        print ("==Riwayat Data Peminjaman Mobil==")
+        t = PrettyTable(['Keterangan', 'Peminjam', 'Mobil', 'Tanggal', 'Bulan', 'Tahun'])
         
-        for carhistory in self.riwayat:
-            print (carhistory)
+
+        for i in self.riwayat:
+            t.add_row([i[0], i[1][0], i[1][1], i[1][2], i[1][3], i[1][4]])
+        print(t)
+    
 
     def mobilrental (self):
         table = PrettyTable()
@@ -122,29 +115,29 @@ class databos:
         print (table)
 
 def admin() :
-        os.system ("cls")
-        print ("=================================")
-        print ("||||>>>=== 11 Rent Car ===<<<||||")
-        print ("=================================")
-        print ("|1. Tampilkan Data Rental       |")
-        print ("|2. Hapus Data Rental           |")
-        print ("|3. Riwayat Peminjaman Mobil    |")
-        print ("|4. Cari Data Pemesan           |")
-        print ("|5. Keluar                      |")
-        print ("=================================")
+    os.system ("cls")
+    print ("=================================")
+    print ("||||>>>=== 11 Rent Car ===<<<||||")
+    print ("=================================")
+    print ("|1. Tampilkan Data Rental       |")
+    print ("|2. Hapus Data Rental           |")
+    print ("|3. Riwayat Peminjaman Mobil    |")
+    print ("|4. Cari Data Pemesan           |")
+    print ("|5. Keluar                      |")
+    print ("=================================")
 
 def pembeli() :
-        os.system ("cls")
-        print ("=================================")
-        print ("||||>>>=== 11 Rent Car ===<<<||||")
-        print ("=================================")
-        print ("|1. Tampilkan Daftar Mobil      |")
-        print ("|2. Buat Pemesanan              |")
-        print ("=================================")
+    os.system ("cls")
+    print ("=================================")
+    print ("||||>>>=== 11 Rent Car ===<<<||||")
+    print ("=================================")
+    print ("|1. Tampilkan Daftar Mobil      |")
+    print ("|2. Buat Pemesanan              |")
+    print ("=================================")
 
 rentcar = databos()
-rentcar.newdata(daftar("1", "Rikad Anggoro", "Innova Reborn", "2", "April", "2023"))
-rentcar.newdata(daftar("2","Joko Susanto", "Avanza Veloz", "5", "Maret", "2023"))
+rentcar.newdata(daftar("Rikad Anggoro", "Innova Reborn", "2", "April", "2023"))
+rentcar.newdata(daftar("Joko Susanto", "Avanza Veloz", "5", "Maret", "2023"))
 
 
 rentcar1=databos()
@@ -156,7 +149,7 @@ akun = {" User " : ["Pemilik","Pembeli"],
 
 while True:
     print ("~~~/\/\/\/\ 11 Rent Car /\/\/\/\~~~")
-    posisi = input(" Masukkan Username : ")
+    posisi = str.capitalize(input(" Masukkan Username : "))
     try :
         temukan = akun.get(" User ").index (posisi)
         if akun.get(" User ")[temukan]=="Pemilik":
@@ -199,13 +192,12 @@ while True:
                     if pilih == "1":
                         rentcar1.mobilrental()
                     elif pilih == "2":
-                        id  = input ("ID                 : ")
                         nama= input ("Nama Peminjam      : ")
                         mbl = input ("Jenis Mobil        : ")
                         tgl = input ("Tanggal Peminjaman : ")
                         bln = input ("Bulan Peminjaman   : ")
                         thn = input ("Tahun Peminjaman   : ")
-                        pesan = rentcar.newdata(mbl,nama)
+                        pesan = daftar(nama,mbl,tgl,bln,thn)
                         rentcar.newdata(pesan)
                         input ("=================================")
                     else:
