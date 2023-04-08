@@ -13,8 +13,7 @@ class daftar:
         self.next = None
 
 class mobil:
-    def __init__(self, no, oto):
-        self.no = no
+    def __init__(self, oto):
         self.oto = oto
         self.next = None
 
@@ -34,11 +33,12 @@ class databos:
         self.riwayat.append(("Ditambahkan",(rental.peminjam, rental.mobil, rental.tanggal, rental.bulan, rental.tahun)))
     
     def newdata1 (self, mobil):
-        if self.head is None:
+        if self.head == None:
             self.head = mobil
+            self.tail = self.head
         else:
-            mobil.next = self.head
-            self.head = mobil
+            self.tail.next = mobil
+            self.tail = self.tail.next
 
     def nowcardata (self):
         table = PrettyTable()
@@ -97,7 +97,7 @@ class databos:
             print(table)
 
     def history (self):
-        t = PrettyTable(['Keterangan', 'Peminjam', 'Mobil', 'Tanggal', 'Bulan', 'Tahun'])
+        t = PrettyTable(["Keterangan", "Peminjam", "Mobil", "Tanggal", "Bulan", "Tahun"])
         
 
         for i in self.riwayat:
@@ -108,9 +108,11 @@ class databos:
     def mobilrental (self):
         table = PrettyTable()
         table.field_names = ["No", "Mobil"]
+        number = 1
         mobilrental = self.head
         while mobilrental:
-            table.add_row([mobilrental.no, mobilrental.oto])
+            table.add_row([number, mobilrental.oto])
+            number += 1
             mobilrental = mobilrental.next
         print (table)
 
@@ -139,10 +141,9 @@ rentcar = databos()
 rentcar.newdata(daftar("Rikad Anggoro", "Innova Reborn", "2", "April", "2023"))
 rentcar.newdata(daftar("Joko Susanto", "Avanza Veloz", "5", "Maret", "2023"))
 
-
 rentcar1=databos()
-rentcar1.newdata1(mobil("1","Innova Reborn"))
-rentcar1.newdata1(mobil("2","Avanza Veloz"))
+rentcar1.newdata1(mobil("Innova Reborn"))
+rentcar1.newdata1(mobil("Avanza Veloz"))
 
 akun = {" User " : ["Pemilik","Pembeli"],
         " Passw " : ["123", "0"]}
