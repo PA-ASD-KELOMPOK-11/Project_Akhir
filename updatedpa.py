@@ -144,7 +144,8 @@ def admin() :
     print ("|2. Hapus Data Rental           |")
     print ("|3. Riwayat Peminjaman Mobil    |")
     print ("|4. Cari Data Pemesan           |")
-    print ("|5. Keluar                      |")
+    print ("|5. Sorting                     |")
+    print ("|6. Log Out                     |")
     print ("=================================")
 
 def pembeli() :
@@ -177,9 +178,9 @@ while True:
     posisi = input(" Masukkan pilihan : ")
 
     if posisi == "1":
-        login = str.capitalize(input(" masukan username: "))
+        login = str.capitalize(input("Masukkan Username : "))
         if login in akun["User"]:
-            pw = input(" masukan password: ")
+            pw = input("Masukkan Password : ")
             if pw in akun["Passw"]:
                 admin()
                 while True:
@@ -202,16 +203,16 @@ while True:
                         cari = input("cari :")
                         rentcar.search(cari)
                     elif pilih == "5":
-                        break
-                    elif pilih == "6":
                         rentcar.shellSort()
+                    elif pilih == "6":
+                        break
                     else:
                         print ("Pilihan Salah")
                         time.sleep(1)
             elif pw not in akun["Passw"]:
                 print (" Password Yang Anda Masukan SALAH ")
         elif login not in akun["User"]:
-            print("admin tidak ditemukan")
+            print("Data Admin Tidak Ditemukan")
     elif posisi == "2":
         os.system ("cls")
         print("====== 11 Rent Car ======\n")
