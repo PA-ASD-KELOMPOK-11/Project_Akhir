@@ -154,6 +154,7 @@ def pembeli() :
     print ("=================================")
     print ("|1. Tampilkan Daftar Mobil      |")
     print ("|2. Buat Pemesanan              |")
+    print ("|3. Log out                     |")
     print ("=================================")
 
 rentcar = databos()
@@ -217,32 +218,39 @@ while True:
         print(" 1. Login")
         print(" 2. Register\n")
         print("=========================")
-        pilih = input("Masukan pilihan")
+        pilih = input("Masukan pilihan: ")
         if pilih == "1":
             username = input("Enter your username: ")
             password = input("Enter your password: ")
             user = login(username, password, users)
-            pembeli()
-            while True:
-                pilih = input ("Masukkan Pilihan : ")
-                if pilih == "1":
-                    rentcar1.mobilrental()
-                elif pilih == "2":
-                    id  = input ("ID                 : ")
-                    nama= input ("Nama Peminjam      : ")
-                    mbl = input ("Jenis Mobil        : ")
-                    tgl = input ("Tanggal Peminjaman : ")
-                    bln = input ("Bulan Peminjaman   : ")
-                    thn = input ("Tahun Peminjaman   : ")
-                    pesan = rentcar.newdata(mbl,nama)
-                    rentcar.newdata(pesan)
-                    input ("=================================")
-                else:
-                    print ("Pilihan Salah")
-                    time.sleep(1)
-        if pilih == "2":
+            if user:
+                pembeli()
+                while True:
+                    pilih = input ("Masukkan Pilihan : ")
+                    if pilih == "1":
+                        rentcar1.mobilrental()
+                    elif pilih == "2":
+                        nama= input ("Nama Peminjam      : ")
+                        mbl = input ("Jenis Mobil        : ")
+                        tgl = input ("Tanggal Peminjaman : ")
+                        bln = input ("Bulan Peminjaman   : ")
+                        thn = input ("Tahun Peminjaman   : ")
+                        pesan = daftar(nama,mbl,tgl,bln,thn)
+                        rentcar.newdata(pesan)
+                        input ("=================================")
+                    elif pilih == "3":
+                        break
+                    else:
+                        print ("Pilihan Salah")
+                        time.sleep(1)
+            else:
+                print("password atau username salah")
+                os.system("pause")
+        elif pilih == "2":
             username = input("Enter your desired username: ")
             password = input("Enter your desired password: ")
             user = register(username, password, users)
             if user:
-                print("Account created successfully.")
+                print("\nAccount created successfully.")
+            else:
+                print("Username already exists.")
