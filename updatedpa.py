@@ -115,6 +115,25 @@ class databos:
             number += 1
             mobilrental = mobilrental.next
         print (table)
+class User:
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+
+
+def login(username, password, users):
+    for  user in users:
+        if user.username == username and user.password == password:
+            return user
+    return None
+
+def register(username, password, users):
+    for user in users:
+        if user.username == username:
+            return None
+    new_user = User(username, password)
+    users.append(new_user)
+    return new_user
 
 def admin() :
     os.system ("cls")
@@ -145,17 +164,22 @@ rentcar1=databos()
 rentcar1.newdata1(mobil("Innova Reborn"))
 rentcar1.newdata1(mobil("Avanza Veloz"))
 
-akun = {" User " : ["Pemilik","Pembeli"],
-        " Passw " : ["123", "0"]}
+akun = {"User" : ["Pemilik"],
+        "Passw" : ["123"]}
+users = []
 
 while True:
-    print ("~~~/\/\/\/\ 11 Rent Car /\/\/\/\~~~")
-    posisi = str.capitalize(input(" Masukkan Username : "))
-    try :
-        temukan = akun.get(" User ").index (posisi)
-        if akun.get(" User ")[temukan]=="Pemilik":
-            pw = input (" Masukkan Password : ")
-            if posisi == akun.get(" User ")[temukan] and pw == akun.get(" Passw ")[temukan]:
+    print("====== 11 Rent Car ======\n")
+    print(" 1. Admin")
+    print(" 2. Costmer\n")
+    print("=========================")
+    posisi = input(" Masukkan pilihan : ")
+
+    if posisi == "1":
+        login = str.capitalize(input(" masukan username: "))
+        if login in akun["User"]:
+            pw = input(" masukan password: ")
+            if pw in akun["Passw"]:
                 admin()
                 while True:
                     pilih = input ("Masukkan Pilihan   : ")
@@ -178,32 +202,47 @@ while True:
                         rentcar.search(cari)
                     elif pilih == "5":
                         break
+                    elif pilih == "6":
+                        rentcar.shellSort()
                     else:
                         print ("Pilihan Salah")
                         time.sleep(1)
-            else:
-                    print (" Password Yang Anda Masukan SALAH ")
-        else: 
-            akun.get(" User ")[temukan]=="Pembeli"
-            pw = input (" Masukkan Password : ")
-            if posisi == akun.get(" User ")[temukan] and pw == akun.get(" Passw ")[temukan]:
-                pembeli()
-                while True:
-                    pilih = input ("Masukkan Pilihan : ")
-                    if pilih == "1":
-                        rentcar1.mobilrental()
-                    elif pilih == "2":
-                        nama= input ("Nama Peminjam      : ")
-                        mbl = input ("Jenis Mobil        : ")
-                        tgl = input ("Tanggal Peminjaman : ")
-                        bln = input ("Bulan Peminjaman   : ")
-                        thn = input ("Tahun Peminjaman   : ")
-                        pesan = daftar(nama,mbl,tgl,bln,thn)
-                        rentcar.newdata(pesan)
-                        input ("=================================")
-                    else:
-                        print ("Pilihan Salah")
-                        time.sleep(1)
-
-    except ValueError:
-        print (" Maaf Username Tidak Ditemukan ")
+            elif pw not in akun["Passw"]:
+                print (" Password Yang Anda Masukan SALAH ")
+        elif login not in akun["User"]:
+            print("admin tidak ditemukan")
+    elif posisi == "2":
+        os.system ("cls")
+        print("====== 11 Rent Car ======\n")
+        print(" 1. Login")
+        print(" 2. Register\n")
+        print("=========================")
+        pilih = input("Masukan pilihan")
+        if pilih == "1":
+            username = input("Enter your username: ")
+            password = input("Enter your password: ")
+            user = login(username, password, users)
+            pembeli()
+            while True:
+                pilih = input ("Masukkan Pilihan : ")
+                if pilih == "1":
+                    rentcar1.mobilrental()
+                elif pilih == "2":
+                    id  = input ("ID                 : ")
+                    nama= input ("Nama Peminjam      : ")
+                    mbl = input ("Jenis Mobil        : ")
+                    tgl = input ("Tanggal Peminjaman : ")
+                    bln = input ("Bulan Peminjaman   : ")
+                    thn = input ("Tahun Peminjaman   : ")
+                    pesan = rentcar.newdata(mbl,nama)
+                    rentcar.newdata(pesan)
+                    input ("=================================")
+                else:
+                    print ("Pilihan Salah")
+                    time.sleep(1)
+        if pilih == "2":
+            username = input("Enter your desired username: ")
+            password = input("Enter your desired password: ")
+            user = register(username, password, users)
+            if user:
+                print("Account created successfully.")
