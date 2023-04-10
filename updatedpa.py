@@ -11,13 +11,11 @@ class daftar:
         self.bulan = bulan
         self.tahun = tahun
         self.next = None
-# ====================================================================================================
 
-# class mobil:
-#     def _init_(self, oto):
-#         self.oto = oto
-#         self.next = None
-# ====================================================================================================
+class mobil:
+    def __init__(self, oto):
+        self.oto = oto
+        self.next = None
 
 class databos:
     def __init__ (self):
@@ -25,23 +23,22 @@ class databos:
         self.tail = None
         self.riwayat = []
 
-    def newdata (self, peminjam,mobil,tanggal,bulan,tahun):
-        current = daftar(peminjam,mobil,tanggal,bulan,tahun)
+    def newdata (self, rental):
         if self.head == None:
-            self.head = current
+            self.head = rental
             self.tail = self.head
         else:
-            self.tail.next = current
+            self.tail.next = rental
             self.tail = self.tail.next
-        self.riwayat.append(("Ditambahkan",(current.peminjam, current.mobil, current.tanggal, current.bulan, current.tahun)))
+        self.riwayat.append(("Ditambahkan",(rental.peminjam, rental.mobil, rental.tanggal, rental.bulan, rental.tahun)))
     
-    # def newdata1 (self, mobil):
-    #     if self.head == None:
-    #         self.head = mobil
-    #         self.tail = self.head
-    #     else:
-    #         self.tail.next = mobil
-    #         self.tail = self.tail.next
+    def newdata1 (self, mobil):
+        if self.head == None:
+            self.head = mobil
+            self.tail = self.head
+        else:
+            self.tail.next = mobil
+            self.tail = self.tail.next
 
     def nowcardata (self):
         table = PrettyTable()
@@ -88,11 +85,13 @@ class databos:
     
     def search(self, keyword):
         table = PrettyTable()
-        table.field_names = ["ID","Mobil", "Peminjam","Tanggal","Bulan","Tahun"]
+        table.field_names = ["ID", "Mobil", "Peminjam","Tanggal","Bulan","Tahun"]
+        number = 1
         cari = self.head
         while cari is not None:
-            if keyword.lower() in cari.id.lower() or keyword.lower() in cari.mobil.lower() or keyword.lower() in cari.peminjam.lower():
-                table.add_row([ cari.id,cari.mobil, cari.peminjam,cari.tanggal,cari.bulan,cari.tahun])
+            if keyword.lower() in cari.mobil.lower() or keyword.lower() in cari.peminjam.lower():
+                table.add_row([number, cari.mobil, cari.peminjam,cari.tanggal,cari.bulan,cari.tahun])
+            number +=1
             cari = cari.next
         if len(table._rows) == 0:
             print("Data Peminjaman Tidak Ditemukan")
@@ -114,11 +113,11 @@ class databos:
         number = 1
         mobilrental = self.head
         while mobilrental:
-            table.add_row([number, mobilrental.mobil])
+            table.add_row([number, mobilrental.oto])
             number += 1
             mobilrental = mobilrental.next
         print (table)
-
+    
     def sort_playlist(self, field):
         list = []
         current = self.head
@@ -142,13 +141,11 @@ class databos:
         self.tail = sorted_list[-1]
         self.tail.next = None
 
-# ====================================================================================================
 
 class User:
     def __init__(self, username, password):
         self.username = username
         self.password = password
-# ====================================================================================================
 
 def login(username, password, users):
     for  user in users:
@@ -164,8 +161,6 @@ def register(username, password, users):
     users.append(new_user)
     return new_user
 
-
-
 def admin() :
     os.system ("cls")
     print ("=================================")
@@ -175,8 +170,7 @@ def admin() :
     print ("|2. Hapus Data Rental           |")
     print ("|3. Riwayat Peminjaman Mobil    |")
     print ("|4. Cari Data Pemesan           |")
-    print ("|5. Sorting                     |")
-    print ("|6. Log Out                     |")
+    print ("|5. Log Out                     |")
     print ("=================================")
 
 def pembeli() :
@@ -190,15 +184,16 @@ def pembeli() :
     print ("=================================")
 
 rentcar = databos()
-# rentcar.newdata(daftar("Rikad Anggoro", "Innova Reborn", "2", "April", "2023"))
-# rentcar.newdata(daftar("Joko Susanto", "Avanza Veloz", "5", "Maret", "2023"))
+rentcar.newdata(daftar("Rikad Anggoro", "Avanza Veloz", "2", "April", "2023"))
+rentcar.newdata(daftar("Joko Susanto", "Innova Reborn", "5", "Maret", "2023"))
 
-# rentcar1=databos()
-# rentcar1.newdata1(mobil("Innova Reborn"))
-# rentcar1.newdata1(mobil("Avanza Veloz"))
 
-akun = {"User" : ["Awd"],
-        "Passw" : ["awd"]}
+rentcar1=databos()
+rentcar1.newdata1(mobil("Innova Reborn"))
+rentcar1.newdata1(mobil("Avanza Veloz"))
+
+akun = {"User" : ["Pemilik"],
+        "Passw" : ["123"]}
 users = []
 
 while True:
@@ -236,10 +231,6 @@ while True:
                         cari = input("cari :")
                         rentcar.search(cari)
                     elif pilih == "5":
-                        field = input("Enter the field to sort by (nama/mobil): ")
-                        rentcar.sort_playlist(field)
-                        print("telah di sorting")
-                    elif pilih == "6":
                         break
                     else:
                         print ("Pilihan Salah")
@@ -264,15 +255,15 @@ while True:
                 while True:
                     pilih = input ("Masukkan Pilihan : ")
                     if pilih == "1":
-                        rentcar.nowcardata()
+                        rentcar1.mobilrental()
                     elif pilih == "2":
                         nama= input ("Nama Peminjam      : ")
                         mbl = input ("Jenis Mobil        : ")
                         tgl = input ("Tanggal Peminjaman : ")
                         bln = input ("Bulan Peminjaman   : ")
                         thn = input ("Tahun Peminjaman   : ")
-                        # pesan = daftar(nama,mbl,tgl,bln,thn)
-                        rentcar.newdata(nama,mbl,tgl,bln,thn)
+                        pesan = daftar(nama,mbl,tgl,bln,thn)
+                        rentcar.newdata(pesan)
                         input ("=================================")
                     elif pilih == "3":
                         break
@@ -289,4 +280,4 @@ while True:
             if user:
                 print("\nAccount created successfully.")
             else:
-                print("Username already exists.")
+                print("Username already exists.")
