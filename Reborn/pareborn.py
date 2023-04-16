@@ -7,7 +7,7 @@ from prettytable import PrettyTable
 from dotenv import load_dotenv
 os.system ("cls")
 
-load_dotenv
+load_dotenv()
 
 cluster = MongoClient(os.getenv("MONGO_URI"))
 
