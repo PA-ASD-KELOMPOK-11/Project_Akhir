@@ -1,283 +1,515 @@
+from pymongo import MongoClient
+import pwinput
 import time 
+import datetime
 import os
+import math
 from prettytable import PrettyTable
 os.system ("cls")
 
-class daftar:
-    def __init__(self, peminjam, mobil, tanggal, bulan, tahun):
-        self.peminjam = peminjam
-        self.mobil = mobil
-        self.tanggal = tanggal
-        self.bulan = bulan
-        self.tahun = tahun
+cluster = MongoClient("mongodb+srv://rikadanggoro:rikadanggoro123@rikad.biksr9o.mongodb.net/tes")
+
+# Database Name
+db = cluster["PAasd"]
+
+# Collection Name (akun,mobil,data)
+akun_admin = db["admin"]
+akun_pembeli = db["pembeli"]
+data_mobil = db["list_mobil"]
+pesanan = db["pesanan"]
+riwayat = db["riwayat"]
+
+            
+class Daftar:
+    def __init__(self, rentaldata = None):
+        self.rentaldata = rentaldata
         self.next = None
 
-class mobil:
-    def __init__(self, oto):
-        self.oto = oto
-        self.next = None
-
-class databos:
+class RentalMobil:
     def __init__ (self):
         self.head = None
         self.tail = None
         self.riwayat = []
-
-    def newdata (self, rental):
-        if self.head == None:
-            self.head = rental
-            self.tail = self.head
-        else:
-            self.tail.next = rental
-            self.tail = self.tail.next
-        self.riwayat.append(("Ditambahkan",(rental.peminjam, rental.mobil, rental.tanggal, rental.bulan, rental.tahun)))
+        self.riwayat_collection = db["riwayat"]
     
-    def newdata1 (self, mobil):
-        if self.head == None:
-            self.head = mobil
-            self.tail = self.head
-        else:
-            self.tail.next = mobil
-            self.tail = self.tail.next
-
-    def nowcardata (self):
-        table = PrettyTable()
-        table.field_names = ["ID", "Peminjam", "Mobil", "Tanggal", "Bulan", "Tahun"]
-        number = 1
+    def append(self, rentaldata):
+        new_node = Daftar(rentaldata)
         if self.head is None:
-            print("Tidak ada data peminjaman")
+            self.head = new_node
+            return
+        last_node = self.head
+        while last_node.next:
+            last_node = last_node.next
+        last_node.next = new_node
+
+    # fungsi untuk menambahkan data pesanan
+    def newdata(self):
+        self.nowcardata_user()
+        peminjam = str.capitalize(input("Nama Peminjam : "))
+        mobil = str.title(input("Jenis Mobil : "))
+        for i in data_mobil.find({"mobil": mobil}):
+            if i["mobil"] == mobil:
+                print("Mobil Tersedia")
+                tanggal_pes = datetime.datetime.now()
+                waktu = tanggal_pes.strftime("%X-%d-%B-%Y")
+                sampai = int(input("masukan jumlah hari peminjaman : "))
+                tanggal_kem = tanggal_pes + datetime.timedelta(days=sampai)
+
+                pesan = {
+                    "peminjam": peminjam,
+                    "mobil": mobil,
+                    "tanggal pesan": tanggal_pes.strftime("%d-%B-%Y"),
+                    "tanggal kembali":tanggal_kem.strftime("%d-%B-%Y")}
+                pesanan.insert_one(pesan)
+                riwayat.insert_one({"keterangan": f"Ditambah pada: {waktu}", "peminjam": peminjam, "mobil": mobil, "tanggal pesan": tanggal_pes.strftime("%d-%B-%Y"), "tanggal kembali": tanggal_kem.strftime("%d-%B-%Y")})
+                print("Data berhasil ditambah!")
+
+                rentaldata = [peminjam, mobil, tanggal_pes, tanggal_kem]
+                self.append(rentaldata)
+                time.sleep (1)
+                pembeli()
+
+        print("Mobil Tidak Tersedia")
+        time.sleep (1)
+        self.newdata()
+
+
+    # fungsi untuk menampilkan data pesanan admin
+    def nowcardata_admin(self):
+        data = pesanan.find({})
+
+        if data is None:
+            print("Data Kosong")
         else:
-            current = self.head
-            while current is not None:
-                table.add_row([number, current.peminjam, current.mobil, current.tanggal, current.bulan, current.tahun])
+            tabel = PrettyTable()
+            tabel.field_names = ["ID","Peminjam", "Mobil", "Tanggal pesan", "Tanggal kembali"]
+            number = 1
+            for i in data:
+                tabel.add_row([number, i["peminjam"], i["mobil"], i["tanggal pesan"], i["tanggal kembali"]])
                 number += 1
-                current = current.next
-            print(table)
-    
-    def carlist (self):
-        table = PrettyTable()
-        table.field_names = ["ID", "Peminjam", "Mobil", "Tanggal", "Bulan", "Tahun"]
-        carlist = self.head
-        while carlist:
-            table.add_row([carlist.id, carlist.peminjam, carlist.mobil, carlist.tanggal, carlist.bulan, carlist.tahun])
-            carlist = carlist.next
-        print (table)
+            print(tabel)
 
-    def deletecardata (self, mobil):
-        cardatanow = self.head
-        previouscardata = None
-        while cardatanow is not None:
-            if cardatanow.mobil == mobil:
-                if previouscardata is not None:
-                    previouscardata.next = cardatanow.next
-                    if cardatanow.next is None:
-                        self.tail = previouscardata
-                else:
-                    self.head = cardatanow.next
-                    if self.head is None:
-                        self.tail = None
-                self.riwayat.append(("Dibatalkan",(cardatanow.peminjam, cardatanow.mobil, cardatanow.tanggal, cardatanow.bulan, cardatanow.tahun)))
-                return True
+    def nowcardata_user(self):
+        tampung = []
+        for i in data_mobil.find({}):
+            tampung.append(i)
+
+        if tampung is None:
+            print("Data Kosong")
+        else:
+            tabel = PrettyTable()
+            tabel.field_names = ["Nomor", "Mobil"]
+            number = 1
+            for i in tampung:
+                tabel.add_row([number, i["mobil"]])
+                number += 1
+            print(tabel)
+
+    #fungsi untuk menghapus data pesanan berdasarkan nama peminjam
+    def delete(self):
+        waktu1 = datetime.datetime.now()
+        waktu = waktu1.strftime("%X-%d-%B-%Y")
+        peminjam = str.capitalize(input("Masukkan Nama Peminjam: "))
+        rental_data = []            
+        for rental in pesanan.find({}):
+            rental_data.append(rental)
+        if not rental_data:
+            print("Tidak ada Data Pemesanan")
+        else:
+            found = False
+            for data in rental_data:
+                if data["peminjam"] == peminjam:
+                    found = True
+                    break
+            if not found:
+                print(f"Data Pemesanan {peminjam} tidak ditemukan")
+                loading()
             else:
-                previouscardata = cardatanow
-                cardatanow = cardatanow.next
-        return False
-    
-    def search(self, keyword):
-        table = PrettyTable()
-        table.field_names = ["ID", "Mobil", "Peminjam","Tanggal","Bulan","Tahun"]
+                simpan = []
+                rental = pesanan.find_one({"peminjam": peminjam})
+                simpan.append(rental["peminjam"])
+                simpan.append(rental["mobil"])
+                simpan.append(rental["tanggal pesan"])
+                simpan.append(rental["tanggal kembali"])
+                riwayat.insert_one({"keterangan": f"Dihapus pada: {waktu}", "peminjam": peminjam, "mobil": simpan[1], "tanggal pesan": simpan[2], "tanggal kembali": simpan[3]})
+                pesanan.delete_one({"peminjam": peminjam})
+                print(f"Data Pemesanan {peminjam} berhasil dihapus!")
+                loading()
+
+#======================================================= shorting =========================================================
+
+    #fungsi untuk mengurutkan data berdasarkan tanggal pesan
+    def mergesShort_pes(self, rentaldata):
+        penampungan = []
+        for i in pesanan.find({}):
+            penampungan.append(i)
+
+        if not penampungan:
+            print("List Kosong")
+            return
+            
+        if len(rentaldata) > 1:
+            mid = len(rentaldata) // 2
+            left = rentaldata[:mid]
+            right = rentaldata[mid:]
+
+            self.mergesShort_pes(left)
+            self.mergesShort_pes(right)
+
+            i = j = k = 0
+            while i < len(left) and j < len(right):
+                if left[i]["tanggal pesan"] < right[j]["tanggal pesan"]:
+                    rentaldata[k] = left[i]
+                    i += 1
+                else:
+                    rentaldata[k] = right[j]
+                    j += 1
+                k += 1
+
+            while i < len(left):
+                rentaldata[k] = left[i]
+                i += 1
+                k += 1
+
+            while j < len(right):
+                rentaldata[k] = right[j]
+                j += 1
+                k += 1
+        return rentaldata
+
+    def pengurutan_pes(self):
+        penampungan = []
+        for i in pesanan.find({}):
+            penampungan.append(i)
+
+        result = self.mergesShort_pes(penampungan) 
         number = 1
-        cari = self.head
-        while cari is not None:
-            if keyword.lower() in cari.mobil.lower() or keyword.lower() in cari.peminjam.lower():
-                table.add_row([number, cari.mobil, cari.peminjam,cari.tanggal,cari.bulan,cari.tahun])
-            number +=1
-            cari = cari.next
-        if len(table._rows) == 0:
-            print("Data Peminjaman Tidak Ditemukan")
-        else:
-            print(table)
-
-    def history (self):
-        t = PrettyTable(["Keterangan", "Peminjam", "Mobil", "Tanggal", "Bulan", "Tahun"])
-        
-
-        for i in self.riwayat:
-            t.add_row([i[0], i[1][0], i[1][1], i[1][2], i[1][3], i[1][4]])
-        print(t)
-    
-
-    def mobilrental (self):
         table = PrettyTable()
-        table.field_names = ["No", "Mobil"]
-        number = 1
-        mobilrental = self.head
-        while mobilrental:
-            table.add_row([number, mobilrental.oto])
+        table.field_names = ["ID","Peminjam", "Mobil", "Tanggal pesan", "Tanggal kembali"]
+        for x in result:
+            table.add_row([number, x["peminjam"], x["mobil"], x["tanggal pesan"], x["tanggal kembali"]])
             number += 1
-            mobilrental = mobilrental.next
-        print (table)
-    
-    def sort_playlist(self, field):
-        list = []
-        current = self.head
-        while current:
-            list.append(current)
-            current = current.next
+        print(table)
 
-        if field == "nama":
-            sorted_list = sorted(list, key=lambda song: song.peminjam)
-        elif field == "mobil":
-            sorted_list = sorted(list, key=lambda song: song.mobil)
-        elif field == "":
-            return list
-        else:
-            print("Invalid field.")
+    #fungsi untuk mengurutkan data berdasarkan tanggal kembali
+    def mergesShort_kem(self, rentaldata):
+        penampungan = []
+        for i in pesanan.find({}):
+            penampungan.append(i)
+
+        if not penampungan:
+            print("List Kosong")
             return
 
-        self.head = sorted_list[0]
-        for i in range(len(sorted_list)-1):
-            sorted_list[i].next = sorted_list[i+1]
-        self.tail = sorted_list[-1]
-        self.tail.next = None
+        if len(rentaldata) > 1:
+            mid = len(rentaldata) // 2
+            left = rentaldata[:mid]
+            right = rentaldata[mid:]
 
+            self.mergesShort_kem(left)
+            self.mergesShort_kem(right)
 
-class User:
-    def __init__(self, username, password):
-        self.username = username
-        self.password = password
+            i = j = k = 0
+            while i < len(left) and j < len(right):
+                if left[i]["tanggal kembali"] < right[j]["tanggal kembali"]:
+                    rentaldata[k] = left[i]
+                    i += 1
+                else:
+                    rentaldata[k] = right[j]
+                    j += 1
+                k += 1
 
-def login(username, password, users):
-    for  user in users:
-        if user.username == username and user.password == password:
-            return user
-    return None
+            while i < len(left):
+                rentaldata[k] = left[i]
+                i += 1
+                k += 1
 
-def register(username, password, users):
-    for user in users:
-        if user.username == username:
+            while j < len(right):
+                rentaldata[k] = right[j]
+                j += 1
+                k += 1
+        return rentaldata
+
+    def pengurutan_kem(self):
+        penampungan = []
+        for i in pesanan.find({}):
+            penampungan.append(i)
+
+        result = self.mergesShort_kem(penampungan) 
+        number = 1
+        table = PrettyTable()
+        table.field_names = ["ID","Peminjam", "Mobil", "Tanggal pesan", "Tanggal kembali"]
+        for x in result:
+            table.add_row([number, x["peminjam"], x["mobil"], x["tanggal pesan"], x["tanggal kembali"]])
+            number += 1
+        print(table)
+
+    #fungsi untuk mengurutkan data berdasarkan nama peminjam
+    def mergeSort_nama(self, rentaldata):
+        penampungan = []
+        for i in pesanan.find({}):
+            penampungan.append(i)
+
+        if not penampungan:
+            print("List Kosong")
+            return
+
+        if len(rentaldata) > 1:
+            mid = len(rentaldata) // 2
+            left = rentaldata[:mid]
+            right = rentaldata[mid:]
+
+            self.mergeSort_nama(left)
+            self.mergeSort_nama(right)
+
+            i = j = k = 0
+            while i < len(left) and j < len(right):
+                if left[i]["peminjam"] < right[j]["peminjam"]:
+                    rentaldata[k] = left[i]
+                    i += 1
+                else:
+                    rentaldata[k] = right[j]
+                    j += 1
+                k += 1
+
+            while i < len(left):
+                rentaldata[k] = left[i]
+                i += 1
+                k += 1
+
+            while j < len(right):
+                rentaldata[k] = right[j]
+                j += 1
+                k += 1
+        return rentaldata
+
+    def pengurutan_nama(self):
+        penampungan = []
+        for i in pesanan.find({}):
+            penampungan.append(i)
+
+        result = self.mergeSort_nama(penampungan) 
+        number = 1
+        table = PrettyTable()
+        table.field_names = ["ID","Peminjam", "Mobil", "Tanggal pesan", "Tanggal kembali"]
+        for x in result:
+            table.add_row([number, x["peminjam"], x["mobil"], x["tanggal pesan"], x["tanggal kembali"]])
+            number += 1
+        table.sortby = "Peminjam"
+        print(table)
+
+#======================================================= searching =========================================================
+
+    def jump_search(self, key):
+        penampungan = []
+        for i in pesanan.find({}):
+            penampungan.append(i)
+
+        if not penampungan:
+            print("List Kosong")
             return None
-    new_user = User(username, password)
-    users.append(new_user)
-    return new_user
 
-def admin() :
+        penampungan = sorted(penampungan, key=lambda x: x["peminjam"])
+
+        n = len(penampungan)
+        step = math.sqrt(n)
+        prev = 0
+        while penampungan[int(min(step, n) - 1)]["peminjam"] < key:
+            prev = step
+            step += math.sqrt(n)
+            if prev >= n:
+                return None
+
+        while penampungan[int(prev)]["peminjam"] < key:
+            prev += 1
+            if prev == min(step, n):
+                return None
+
+        if penampungan[int(prev)]["peminjam"] == key:
+            return penampungan[int(prev)]
+
+        return None
+
+    def search(self):
+        penampungan = []
+        for i in pesanan.find({}):
+            penampungan.append(i)
+
+        if not penampungan:
+            print("List Kosong")
+            loading()
+            return
+
+        nama = str.capitalize(input("Masukkan nama yang ingin dicari: "))
+        result = self.jump_search(nama)
+        if result is not None:
+            table = PrettyTable()
+            table.field_names = ["Peminjam", "Mobil", "Tanggal pesan", "Tanggal kembali"]
+            table.add_row([result["peminjam"], result["mobil"], result["tanggal pesan"], result["tanggal kembali"]])
+            print(table)
+            input ("")
+        else:
+            print("Nama tidak ditemukan")
+            loading()
+    
+    def history (self):
+        data = []
+        for x in riwayat.find({}):
+            data.append(x)
+        t = PrettyTable(["Keterangan", "Peminjam", "Mobil", "Tanggal pesan", "Tangal kembali"])
+        t.title = "Riwayat"
+        for i in data:
+            t.add_row([i["keterangan"], i["peminjam"], i["mobil"], i["tanggal pesan"], i["tanggal kembali"]])
+        print(t)
+
+#========================================================= program =================================================================
+def loading():
+    animation = "|/-\\"
+    for i in range(15):
+        time.sleep(0.1)
+        print("Loading " + animation[i % len(animation)], end="\r")
+
+def login():
     os.system ("cls")
-    print ("=================================")
-    print ("||||>>>=== 11 Rent Car ===<<<||||")
-    print ("=================================")
-    print ("|1. Tampilkan Data Rental       |")
-    print ("|2. Hapus Data Rental           |")
-    print ("|3. Riwayat Peminjaman Mobil    |")
-    print ("|4. Cari Data Pemesan           |")
-    print ("|5. Log Out                     |")
-    print ("=================================")
-
-def pembeli() :
-    os.system ("cls")
-    print ("=================================")
-    print ("||||>>>=== 11 Rent Car ===<<<||||")
-    print ("=================================")
-    print ("|1. Tampilkan Daftar Mobil      |")
-    print ("|2. Buat Pemesanan              |")
-    print ("|3. Log out                     |")
-    print ("=================================")
-
-rentcar = databos()
-rentcar.newdata(daftar("Rikad Anggoro", "Avanza Veloz", "2", "April", "2023"))
-rentcar.newdata(daftar("Joko Susanto", "Innova Reborn", "5", "Maret", "2023"))
-
-
-rentcar1=databos()
-rentcar1.newdata1(mobil("Innova Reborn"))
-rentcar1.newdata1(mobil("Avanza Veloz"))
-
-akun = {"User" : ["Pemilik"],
-        "Passw" : ["123"]}
-users = []
-
-while True:
-    print("====== 11 Rent Car ======\n")
-    print(" 1. Admin")
-    print(" 2. Costmer\n")
-    print("=========================")
-    posisi = input(" Masukkan pilihan : ")
-
-    if posisi == "1":
-        login = str.capitalize(input("Masukkan Username : "))
-        if login in akun["User"]:
-            pw = input("Masukkan Password : ")
-            if pw in akun["Passw"]:
+    print("==================================")
+    print("|          11 Rent Car           |")
+    print("==================================")
+    print("| 1. Admin                       |")
+    print("| 2. Pembeli                     |")
+    print("| 3. Exit                        |")
+    print("==================================")
+    pilih = str(input("Masukkan Pilihan : "))
+    time.sleep (1)
+    if pilih == "1":
+        while True:
+            os.system ("cls")
+            print("==================================")
+            print("|            L O G I N           |")
+            print("==================================")
+            username = str.capitalize(input("Masukkan Username : "))
+            pw = str.lower(pwinput.pwinput("Masukkan Password : "))
+            loading()
+            result = akun_admin.find_one({"admin": username, "pass": pw})
+            if result and result["admin"] == username and result["pass"] == pw:
+                print("Login Berhasil!")
+                time.sleep (1)
                 admin()
-                while True:
-                    pilih = input ("Masukkan Pilihan   : ")
-                    if pilih == "1":
-                        field = input("Enter the field to sort by (nama/mobil): ")
-                        rentcar.sort_playlist(field)
-                        rentcar.nowcardata()
-                        input ("=================================")
-                    elif pilih == "2":
-                        jenis = input ("Jenis Mobil : ")
-                        if rentcar.deletecardata(jenis):
-                            print ("Peminjaman Mobil Telah Dibatalkan")
-                            input ("=================================")
-                        else:
-                            print ("Data Tidak Ditemukan")
-                            input ("=================================")
-                    elif pilih == "3":
-                        rentcar.history()
-                        input ("=================================")
-                    elif pilih == "4":
-                        cari = input("cari :")
-                        rentcar.search(cari)
-                    elif pilih == "5":
-                        break
-                    else:
-                        print ("Pilihan Salah")
-                        time.sleep(1)
-            elif pw not in akun["Passw"]:
-                print (" Password Yang Anda Masukan SALAH ")
-        elif login not in akun["User"]:
-            print("Data Admin Tidak Ditemukan")
-    elif posisi == "2":
-        os.system ("cls")
-        print("====== 11 Rent Car ======\n")
-        print(" 1. Login")
-        print(" 2. Register\n")
-        print("=========================")
-        pilih = input("Masukan pilihan: ")
-        if pilih == "1":
-            username = input("Enter your username: ")
-            password = input("Enter your password: ")
-            user = login(username, password, users)
-            if user:
-                pembeli()
-                while True:
-                    pilih = input ("Masukkan Pilihan : ")
-                    if pilih == "1":
-                        rentcar1.mobilrental()
-                    elif pilih == "2":
-                        nama= input ("Nama Peminjam      : ")
-                        mbl = input ("Jenis Mobil        : ")
-                        tgl = input ("Tanggal Peminjaman : ")
-                        bln = input ("Bulan Peminjaman   : ")
-                        thn = input ("Tahun Peminjaman   : ")
-                        pesan = daftar(nama,mbl,tgl,bln,thn)
-                        rentcar.newdata(pesan)
-                        input ("=================================")
-                    elif pilih == "3":
-                        break
-                    else:
-                        print ("Pilihan Salah")
-                        time.sleep(1)
+            elif result is None:
+                print("Login Gagal!")
+                time.sleep (1)
             else:
-                print("password atau username salah")
+                print("Login Gagal!")
+                time.sleep (1)
+
+    elif pilih == "2":
+        while True:
+            os.system ("cls")
+            print("==================================")
+            print("|         P E M B E L I          |")
+            print("==================================")
+            print("| 1. Login                       |")
+            print("| 2. Registrasi Akun             |")
+            print("==================================")
+            pilih = str(input("Masukkan Pilihan : "))
+            if pilih == "1":
+                print("==================================")
+                print("|            L O G I N           |")
+                print("==================================")
+                username = str.capitalize(input("Masukkan Username : "))
+                pw = str.lower(pwinput.pwinput("Masukkan Password : "))
+                loading()
+                result = akun_pembeli.find_one({"pembeli": username, "pass": pw})
+                if result and result["pembeli"] == username and result["pass"] == pw:
+                    print("Login Berhasil!")
+                    time.sleep (1)
+                    pembeli()
+                elif result is None:
+                    print("Login Gagal!")
+                    time.sleep (1)
+                else:
+                    print("Login Gagal!")
+                    time.sleep (1)
+            elif pilih == "2":
+                    print("==================================")
+                    print("|       R E G I S T R A S I      |")
+                    print("==================================")
+                    username_baru = str.capitalize(input("Masukkan username baru: "))
+                    loading()
+                    cek = akun_pembeli.find_one({"pembeli": username_baru})
+                    if cek is not None:
+                        print("Nama telah digunakan!")
+                        time.sleep (1)
+                    else:
+                        password_baru = str.lower(input("Masukkan password baru: "))
+                        akun_pembeli.insert_one({"pembeli": username_baru, "pass": password_baru})
+                        print("Registrasi Berhasil!")
+                        time.sleep (1)
+    else:
+        print("Pilihan tidak tersedia!")
+                
+def admin():
+    while True:
+        os.system ("cls")
+        print ("=============================================")
+        print ("||||||>>>>>===== 11 Rent Car =====<<<<<||||||")
+        print ("=============================================")
+        print ("|1. Tampilkan Data                          |")
+        print ("|2. Hapus Data Rental                       |")
+        print ("|3. Riwayat Peminjaman Mobil                |")
+        print ("|4. Cari Data Pemesan                       |")
+        print ("|5. Log Out                                 |")
+        print ("=============================================")
+        pilih = str(input("Masukkan Pilihan : "))
+        if pilih == "1":
+            os.system("cls")
+            print ("=============================================")
+            print ("|               S O R T I N G               |")
+            print ("=============================================")
+            print ("|1. Berdasarkan Nama                        |")
+            print ("|2. Berdasarkan Tanggal pesan               |")
+            print ("|3. Berdasarkan Tanggal kembali             |")
+            print ("=============================================")
+            choose = str(input("Tentukan Pilihan : "))
+            if choose == "1":
+                RentalMobil().pengurutan_nama()
+                os.system("pause")
+            elif choose == "2":
+                RentalMobil().pengurutan_pes()
+                os.system("pause")
+            elif choose == "3":
+                RentalMobil().pengurutan_kem()
                 os.system("pause")
         elif pilih == "2":
-            username = input("Enter your desired username: ")
-            password = input("Enter your desired password: ")
-            user = register(username, password, users)
-            if user:
-                print("\nAccount created successfully.")
-            else:
-                print("Username already exists.")
+            RentalMobil().delete()
+        elif pilih == "3":
+            RentalMobil().history()
+            os.system("pause")
+        elif pilih == "4":
+            RentalMobil().search()
+        elif pilih == "5":
+            login()
+        else:
+            print ("Pilihan Salah")
+            time.sleep(1)
+
+def pembeli():
+    while True:
+        os.system ("cls")
+        print ("=================================")
+        print ("||||>>>=== 11 Rent Car ===<<<||||")
+        print ("=================================")
+        print ("|1. Lihat Daftar Mobil          |")
+        print ("|2. Buat Pemesanan              |")
+        print ("|3. Exit                        |")
+        print ("=================================")
+        pilih = str(input("Masukkan Pilihan : "))
+        if pilih == "1":
+            RentalMobil().nowcardata_user()
+            time.sleep (1)
+        elif pilih == "2":
+            RentalMobil().newdata()
+        elif pilih == "3":
+            login()
+
+
+login()
