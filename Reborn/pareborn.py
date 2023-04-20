@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 import pwinput
-import time 
+import time
+import datetime 
 import os
 import math
 from prettytable import PrettyTable
@@ -21,73 +22,92 @@ data_mobil = db["list_mobil"]
 pesanan = db["pesanan"]
 riwayat = db["riwayat"]
 
+def loading():
+    animation = "|/-\\"
+    for i in range(15):
+        time.sleep(0.1)
+        print("Loading " + animation[i % len(animation)], end="\r")
+
 #============================================= MENU LOGIN AWAL =============================================      
 def login():
-    os.system ("cls")
-    print("==================================")
-    print("|          11 Rent Car           |")
-    print("==================================")
-    print("| 1. Admin                       |")
-    print("| 2. Pembeli                     |")
-    print("==================================")
-    pilih = str(input("Masukkan Pilihan : "))
-    time.sleep (1)
-    if pilih == "1":
-        while True:
-            os.system ("cls")
-            print("===================================================")
-            print("                    L O G I N                      ")
-            print("===================================================")
-            username = str.capitalize(input("Masukkan Username : "))
-            pw = str.lower(pwinput.pwinput("Masukkan Password : "))
-            result = akun_admin.find_one({"admin": username, "pass": pw})
-            if result and result["admin"] == username and result["pass"] == pw:
-                print("Login Berhasil!")
-                time.sleep (2)
-                admin()
-            elif result is None:
-                print("Login Gagal!")
-                time.sleep (2)
-            else:
-                print("Login Gagal!")
-
-    elif pilih == "2":
-        while True:
-            os.system ("cls")
-            print("==================================")
-            print("|         P E M B E L I          |")
-            print("==================================")
-            print("| 1. Login                       |")
-            print("| 2. Registrasi Akun             |")
-            print("==================================")
-            pilih = str(input("Masukkan Pilihan : "))
-            if pilih == "1":
+    while True:
+        os.system ("cls")
+        print("==================================")
+        print("|          11 Rent Car           |")
+        print("==================================")
+        print("| 1. Admin                       |")
+        print("| 2. Pembeli                     |")
+        print("| 3. Exit                        |")
+        print("==================================")
+        pilih = str(input("Masukkan Pilihan : "))
+        loading()
+        if pilih == "1":
+            while True:
+                os.system ("cls")
+                print("==================================")
+                print("|            L O G I N           |")
+                print("==================================")
                 username = str.capitalize(input("Masukkan Username : "))
                 pw = str.lower(pwinput.pwinput("Masukkan Password : "))
-                result = akun_pembeli.find_one({"pembeli": username, "pass": pw})
-                if result and result["pembeli"] == username and result["pass"] == pw:
+                loading()
+                result = akun_admin.find_one({"admin": username, "pass": pw})
+                if result and result["admin"] == username and result["pass"] == pw:
                     print("Login Berhasil!")
-                    time.sleep (2)
-                    pembeli()
+                    admin()
                 elif result is None:
                     print("Login Gagal!")
-                    time.sleep (2)
                 else:
                     print("Login Gagal!")
-            elif pilih == "2":
+
+        elif pilih == "2":
+            while True:
+                os.system ("cls")
+                print("==================================")
+                print("|         P E M B E L I          |")
+                print("==================================")
+                print("| 1. Login                       |")
+                print("| 2. Registrasi Akun             |")
+                print("==================================")
+                pilih = str(input("Masukkan Pilihan : "))
+                if pilih == "1":
+                    os.system ("cls")
+                    print("==================================")
+                    print("|            L O G I N           |")
+                    print("==================================")
+                    username = str.capitalize(input("Masukkan Username : "))
+                    pw = str.lower(pwinput.pwinput("Masukkan Password : "))
+                    loading()
+                    result = akun_pembeli.find_one({"pembeli": username, "pass": pw})
+                    if result and result["pembeli"] == username and result["pass"] == pw:
+                        print("Login Berhasil!")
+                        pembeli()
+                    elif result is None:
+                        print("Login Gagal!")
+                    else:
+                        print("Login Gagal!")
+
+                elif pilih == "2":
+                    os.system ("cls")
+                    print("==================================")
+                    print("|       R E G I S T R A S I      |")
+                    print("==================================")
                     username_baru = str.capitalize(input("Masukkan username baru: "))
                     cek = akun_pembeli.find_one({"pembeli": username_baru})
                     if cek is not None:
                         print("Nama telah digunakan!")
-                        time.sleep (2)
+
                     else:
                         password_baru = str.lower(input("Masukkan password baru: "))
                         akun_pembeli.insert_one({"pembeli": username_baru, "pass": password_baru})
+                        loading()
                         print("Registrasi Berhasil!")
-                        time.sleep (2)
-    else:
-        print("Pilihan tidak tersedia!")
+        elif pilih == "3":
+            print("---- T E R I M A  K A S I H ----")
+            break
 
+        else:
+            print("Pilihan tidak tersedia!")
+            time.sleep (2)
 #============================================= MENU ADMIN =============================================               
 def admin():
     while True:
@@ -132,7 +152,7 @@ def admin():
             login()
         else:
             print ("Pilihan Salah")
-            time.sleep(1)
+            loading()
 
 #============================================= MENU PEMBELI =============================================      
 def pembeli():
