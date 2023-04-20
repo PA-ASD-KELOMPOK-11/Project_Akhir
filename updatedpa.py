@@ -58,10 +58,10 @@ class RentalMobil:
                 pesan = {
                     "peminjam": peminjam,
                     "mobil": mobil,
-                    "tanggal pesan": tanggal_pes.strftime("%d-%B-%Y"),
-                    "tanggal kembali":tanggal_kem.strftime("%d-%B-%Y")}
+                    "tanggal pesan": tanggal_pes.strftime("%x"),
+                    "tanggal kembali":tanggal_kem.strftime("%x")}
                 pesanan.insert_one(pesan)
-                riwayat.insert_one({"keterangan": f"Ditambah pada: {waktu}", "peminjam": peminjam, "mobil": mobil, "tanggal pesan": tanggal_pes.strftime("%d-%B-%Y"), "tanggal kembali": tanggal_kem.strftime("%d-%B-%Y")})
+                riwayat.insert_one({"keterangan": f"Ditambah pada: {waktu}", "peminjam": peminjam, "mobil": mobil, "tanggal pesan": tanggal_pes.strftime("%x"), "tanggal kembali": tanggal_kem.strftime("%x")})
                 print("Data berhasil ditambah!")
 
                 rentaldata = [peminjam, mobil, tanggal_pes, tanggal_kem]
