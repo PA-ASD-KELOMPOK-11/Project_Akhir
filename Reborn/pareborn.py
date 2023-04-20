@@ -53,11 +53,14 @@ def login():
                 result = akun_admin.find_one({"admin": username, "pass": pw})
                 if result and result["admin"] == username and result["pass"] == pw:
                     print("Login Berhasil!")
+                    time.sleep (2)
                     admin()
                 elif result is None:
                     print("Login Gagal!")
+                    time.sleep (2)
                 else:
                     print("Login Gagal!")
+                    time.sleep (2)
 
         elif pilih == "2":
             while True:
@@ -69,38 +72,50 @@ def login():
                 print("| 2. Registrasi Akun             |")
                 print("==================================")
                 pilih = str(input("Masukkan Pilihan : "))
+                loading()
                 if pilih == "1":
-                    os.system ("cls")
-                    print("==================================")
-                    print("|            L O G I N           |")
-                    print("==================================")
-                    username = str.capitalize(input("Masukkan Username : "))
-                    pw = str.lower(pwinput.pwinput("Masukkan Password : "))
-                    loading()
-                    result = akun_pembeli.find_one({"pembeli": username, "pass": pw})
-                    if result and result["pembeli"] == username and result["pass"] == pw:
-                        print("Login Berhasil!")
-                        pembeli()
-                    elif result is None:
-                        print("Login Gagal!")
-                    else:
-                        print("Login Gagal!")
+                    while True:
+                        os.system ("cls")
+                        print("==================================")
+                        print("|            L O G I N           |")
+                        print("==================================")
+                        username = str.capitalize(input("Masukkan Username : "))
+                        pw = str.lower(pwinput.pwinput("Masukkan Password : "))
+                        loading()
+                        result = akun_pembeli.find_one({"pembeli": username, "pass": pw})
+                        if result and result["pembeli"] == username and result["pass"] == pw:
+                            print("Login Berhasil!")
+                            time.sleep (2)
+                            pembeli()
+                        elif result is None:
+                            print("Login Gagal!")
+                            time.sleep (2)
+                        else:
+                            print("Login Gagal!")
+                            time.sleep (2)
 
                 elif pilih == "2":
-                    os.system ("cls")
-                    print("==================================")
-                    print("|       R E G I S T R A S I      |")
-                    print("==================================")
-                    username_baru = str.capitalize(input("Masukkan username baru: "))
-                    cek = akun_pembeli.find_one({"pembeli": username_baru})
-                    if cek is not None:
-                        print("Nama telah digunakan!")
-
-                    else:
-                        password_baru = str.lower(input("Masukkan password baru: "))
-                        akun_pembeli.insert_one({"pembeli": username_baru, "pass": password_baru})
-                        loading()
-                        print("Registrasi Berhasil!")
+                    while True:
+                        os.system ("cls")
+                        print("==================================")
+                        print("|       R E G I S T R A S I      |")
+                        print("==================================")
+                        username_baru = str.capitalize(input("Masukkan username baru: "))
+                        cek = akun_pembeli.find_one({"pembeli": username_baru})
+                        if cek is not None:
+                            loading()
+                            print("Nama telah digunakan!")
+                            time.sleep (2)
+                        else:
+                            password_baru = str.lower(input("Masukkan password baru: "))
+                            akun_pembeli.insert_one({"pembeli": username_baru, "pass": password_baru})
+                            loading()
+                            print("Registrasi Berhasil!")
+                            time.sleep (2)
+                else:
+                    loading()
+                    print ("Pilihan Salah")
+                    time.sleep (2)
         elif pilih == "3":
             print("---- T E R I M A  K A S I H ----")
             break
@@ -122,37 +137,47 @@ def admin():
         print ("|5. Log Out                                 |")
         print ("=============================================")
         pilih = str(input("Masukkan Pilihan : "))
+        loading()
         if pilih == "1":
-            os.system("cls")
-            print ("=============================================")
-            print ("|               S O R T I N G               |")
-            print ("=============================================")
-            print ("|1. Berdasarkan Nama                        |")
-            print ("|2. Berdasarkan Tanggal                     |")
-            print ("|3. Berdasarkan Bulan                       |")
-            print ("=============================================")
-            choose = str(input("Tentukan Pilihan : "))
-            if choose == "1":
-                RentalMobil().pengurutan_nama()
-                input ("")
-            elif choose == "2":
-                RentalMobil().pengurutan_tanggal()
-                input ("")
-            elif choose == "3":
-                RentalMobil().pengurutan_bulan()
-                input ("")
+            while True:
+                os.system("cls")
+                print ("=============================================")
+                print ("|               S O R T I N G               |")
+                print ("=============================================")
+                print ("|1. Berdasarkan Nama                        |")
+                print ("|2. Berdasarkan Tanggal                     |")
+                print ("|3. Berdasarkan Bulan                       |")
+                print ("|4. Exit                                    |")
+                print ("=============================================")
+                choose = str(input("Tentukan Pilihan : "))
+                loading()
+                if choose == "1":
+                    RentalMobil().pengurutan_nama()
+                    input ("Press Enter To Continue...")
+                elif choose == "2":
+                    RentalMobil().pengurutan_tanggal()
+                    input ("Press Enter To Continue...")
+                elif choose == "3":
+                    RentalMobil().pengurutan_bulan()
+                    input ("Press Enter To Continue...")
+                elif choose == "4":
+                    break
+                else:
+                    print ("Pilihan Salah")
+                    time.sleep (2)
         elif pilih == "2":
             RentalMobil().delete()
         elif pilih == "3":
             RentalMobil().history()
-            input ("")
+            input ("Press Enter To Continue...")
         elif pilih == "4":
             RentalMobil().search()
         elif pilih == "5":
             login()
         else:
-            print ("Pilihan Salah")
             loading()
+            print ("Pilihan Salah")
+            time.sleep (2)
 
 #============================================= MENU PEMBELI =============================================      
 def pembeli():
@@ -166,13 +191,18 @@ def pembeli():
         print ("|3. Exit                        |")
         print ("=================================")
         pilih = str(input("Masukkan Pilihan : "))
+        loading()
         if pilih == "1":
             RentalMobil().nowcardata_user()
-            time.sleep (2)
+            input ("Press Enter To Continue...")
         elif pilih == "2":
             RentalMobil().newdata()
         elif pilih == "3":
             login()
+        else:
+            loading()
+            print ("Pilihan Salah")
+            time.sleep (2)
 
 #============================================= CLASS =============================================      
 class Daftar:
@@ -485,7 +515,7 @@ class RentalMobil:
             input ("")
             return
 
-        nama = str.capitalize(input("Masukkan nama yang ingin dicari: "))
+        nama = str.capitalize(input("Masukkan Nama Peminjam : "))
         result = self.jump_search(nama)
         if result is not None:
             table = PrettyTable()
