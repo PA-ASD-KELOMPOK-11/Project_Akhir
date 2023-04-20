@@ -364,7 +364,7 @@ class RentalMobil:
         result = self.mergeSort_nama(penampungan) 
         number = 1
         table = PrettyTable()
-        table.field_names = ["ID","Peminjam", "Mobil", "Tanggal", "Bulan", "Tahun"]
+        table.field_names = ["No","Peminjam", "Mobil", "Tanggal", "Bulan", "Tahun"]
         for x in result:
             table.add_row([number, x["peminjam"], x["mobil"], x["tanggal"], x["bulan"], x["tahun"]])
             number += 1
@@ -417,7 +417,7 @@ class RentalMobil:
         result = self.mergeSort_tanggal(penampungan) 
         number = 1
         table = PrettyTable()
-        table.field_names = ["ID","Peminjam", "Mobil", "Tanggal", "Bulan", "Tahun"]
+        table.field_names = ["No","Peminjam", "Mobil", "Tanggal", "Bulan", "Tahun"]
         for x in result:
             table.add_row([number, x["peminjam"], x["mobil"], x["tanggal"], x["bulan"], x["tahun"]])
             number += 1
@@ -469,7 +469,7 @@ class RentalMobil:
         result = self.mergeSort_bulan(penampungan) 
         number = 1
         table = PrettyTable()
-        table.field_names = ["ID","Peminjam", "Mobil", "Tanggal", "Bulan", "Tahun"]
+        table.field_names = ["No","Peminjam", "Mobil", "Tanggal", "Bulan", "Tahun"]
         for x in result:
             table.add_row([number, x["peminjam"], x["mobil"], x["tanggal"], x["bulan"], x["tahun"]])
             number += 1
