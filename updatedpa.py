@@ -46,32 +46,46 @@ class RentalMobil:
     def newdata(self):
         self.nowcardata_user()
         peminjam = str.capitalize(input("Nama Peminjam : "))
-        mobil = str.title(input("Jenis Mobil : "))
-        for i in data_mobil.find({"mobil": mobil}):
-            if i["mobil"] == mobil:
-                print("Mobil Tersedia")
-                tanggal_pes = datetime.datetime.now()
-                waktu = tanggal_pes.strftime("%X-%d-%B-%Y")
-                sampai = int(input("masukan jumlah hari peminjaman : "))
-                tanggal_kem = tanggal_pes + datetime.timedelta(days=sampai)
+        while True:
+            mobil = str.title(input("Jenis Mobil : "))
+            for i in data_mobil.find({"mobil": mobil}):
+                if i["mobil"] == mobil:
+                    print("Mobil Tersedia")
+                    tanggal_pes = datetime.datetime.now()
+                    waktu = tanggal_pes.strftime("%X-%d-%B-%Y")
+                    while True:
+                        try:
+                            sampai = int(input("masukan jumlah hari peminjaman : "))
+                            if sampai <= 10:
+                                tanggal_kem = tanggal_pes + datetime.timedelta(days=sampai)
 
-                pesan = {
-                    "peminjam": peminjam,
-                    "mobil": mobil,
-                    "tanggal pesan": tanggal_pes.strftime("%d-%B-%Y"),
-                    "tanggal kembali":tanggal_kem.strftime("%d-%B-%Y")}
-                pesanan.insert_one(pesan)
-                riwayat.insert_one({"keterangan": f"Ditambah pada: {waktu}", "peminjam": peminjam, "mobil": mobil, "tanggal pesan": tanggal_pes.strftime("%d-%B-%Y"), "tanggal kembali": tanggal_kem.strftime("%d-%B-%Y")})
-                print("Data berhasil ditambah!")
+                                pesan = {
+                                    "peminjam": peminjam,
+                                    "mobil": mobil,
+                                    "tanggal pesan": tanggal_pes.strftime("%Y-%m-%d"),
+                                    "tanggal kembali":tanggal_kem.strftime("%Y-%m-%d")}
+                                pesanan.insert_one(pesan)
+                                riwayat.insert_one({"keterangan": f"Ditambah pada: {waktu}", "peminjam": peminjam, "mobil": mobil, "tanggal pesan": tanggal_pes.strftime("%Y-%m-%d"), "tanggal kembali": tanggal_kem.strftime("%Y-%m-%d")})
+                                loading()
+                                print("Data berhasil ditambah!")
+                                print("Untuk melakukan pembayaran silahkan menuju kasir")
 
-                rentaldata = [peminjam, mobil, tanggal_pes, tanggal_kem]
-                self.append(rentaldata)
-                time.sleep (1)
-                pembeli()
-
-        print("Mobil Tidak Tersedia")
-        time.sleep (1)
-        self.newdata()
+                                rentaldata = [peminjam, mobil, tanggal_pes, tanggal_kem]
+                                self.append(rentaldata)
+                                time.sleep (2)
+                                pembeli()
+                            elif sampai > 10:
+                                print("batas peminjaman adalah 10 hari")
+                            else:
+                                print("perhatikan inputan anda")
+                                break    
+                        except ValueError:
+                                print("perhatikan inputan anda")
+                                
+            else:
+                print("Mobil Tidak Tersedia")
+        # time.sleep (1)
+        # self.newdata()
 
 
     # fungsi untuk menampilkan data pesanan admin
@@ -379,7 +393,6 @@ def login():
     print("| 3. Exit                        |")
     print("==================================")
     pilih = str(input("Masukkan Pilihan : "))
-    time.sleep (1)
     if pilih == "1":
         while True:
             os.system ("cls")
@@ -460,6 +473,7 @@ def admin():
         print ("|5. Log Out                                 |")
         print ("=============================================")
         pilih = str(input("Masukkan Pilihan : "))
+        loading()
         if pilih == "1":
             os.system("cls")
             print ("=============================================")
@@ -470,6 +484,7 @@ def admin():
             print ("|3. Berdasarkan Tanggal kembali             |")
             print ("=============================================")
             choose = str(input("Tentukan Pilihan : "))
+            loading()
             if choose == "1":
                 RentalMobil().pengurutan_nama()
                 os.system("pause")
@@ -503,6 +518,7 @@ def pembeli():
         print ("|3. Exit                        |")
         print ("=================================")
         pilih = str(input("Masukkan Pilihan : "))
+        loading()
         if pilih == "1":
             RentalMobil().nowcardata_user()
             time.sleep (1)
