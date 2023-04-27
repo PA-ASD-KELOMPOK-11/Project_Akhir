@@ -99,17 +99,17 @@ Jika pembeli telah berhasil login, maka program akan memunculkan 3 menu pelangga
 
 ![gambar 5](output/menu%202%20pembeli.png)
 
-    - 1. Lihat Daftar Mobil
+1. Lihat Daftar Mobil
     Jika pembeli memilih opsi pertama, maka pembeli dapat melihat daftar mobil yang tersedia pada program.
 
     ![gambar 6](output/lihat%20daftar%20mobil(pembeli).png)
 
-    - 2. Buat Pesanan
+2. Buat Pesanan
     Pada menu ini pembeli dapat membuat pesanan dan akan diminta untuk memasukkan nama peminjam, jenis mobil yang akan di sewa, dan kemudian jumlah hari peminjaman.
 
     ![gambar 7](output/buat%20pesanan(pembeli).png)
 
-    - 3. Exit
+3. Exit
     Jika pembeli telah berhasil melakukan penyewaan dan telah selesai, pembeli dapat memilih opsi “exit” untuk keluar dari program.
 
 ### Admin
@@ -126,7 +126,7 @@ Jika pembeli telah berhasil login, maka program akan memunculkan 5 menu admin ya
 
 ![gambar 10](output/menu%201%20admin.png)
 
-    - 1. Tampilkan Data
+1. Tampilkan Data
     Pada menu ini, admin akan Kembali diberikan beberapa menu untuk melihat data rental pada program, yaitu berupa pengurutan data atau sorting berdasarkan nama, berdasarkan tanggal mobil pesan, dan berdasarkan tanggal mobil kembali.
 
     ![gambar 11](output/Tampilkan%20Data%20(admin).png)
@@ -146,7 +146,7 @@ Jika pembeli telah berhasil login, maka program akan memunculkan 5 menu admin ya
 
     ![gambar 14](output/sorting%20berdasarkan%20tanggal%20kembali.png)
 
-    - 2. Hapus Data Rental
+2. Hapus Data Rental
     Untuk menghapus data pada program, admin dapat memilih opsi kedua yaitu Hapus Data Rental. Kemudian, admin akan diminta untuk menginputkan nama pembeli yang ingin di hapus.
 
     ![gambar 15](output/berhasil%20menghapus%20pesanan.png)
@@ -163,12 +163,12 @@ Jika pembeli telah berhasil login, maka program akan memunculkan 5 menu admin ya
 
     ![gambar 18](output/data%20setelah%20dihapus%20(admin).png)
 
-    - 3. Riwayat Peminjaman Mobil
+3. Riwayat Peminjaman Mobil
     Menu ini merupakan history atau seluruh data rental mobil pada program baik yang baru ditambahkan maupun yang sudah dihapus.
 
     ![gambar 19](output/riwayat%20pemesanan%20mobil.png)
 
-    - 4. Cari Data Pemesan
+4. Cari Data Pemesan
     Pada menu ke 4 yaitu Cari Data Pemesan, admin akan diminta untuk menginputkan nama pemesan yang ingin dicari.
 
     ![gambar 20](output/cari%20data%20pesanan.png)
@@ -177,6 +177,6 @@ Jika pembeli telah berhasil login, maka program akan memunculkan 5 menu admin ya
 
     ![gambar 21](output/gagal%20cari%20data%20pesanan.png)
 
-    - 5. Log Out
+5. Log Out
     Menu terakhir yaitu Log Out, untuk kembali pada menu sebelumnya.
 
