@@ -5,9 +5,12 @@ import datetime
 import os
 import math
 from prettytable import PrettyTable
+from dotenv import load_dotenv
 os.system ("cls")
 
-cluster = MongoClient("mongodb+srv://rikadanggoro:rikadanggoro123@rikad.biksr9o.mongodb.net/tes")
+load_dotenv()
+
+cluster = MongoClient(os.getenv("MONGO_URI"))
 
 # Database Name
 db = cluster["PAasd"]
