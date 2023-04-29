@@ -6,6 +6,7 @@ import os
 import math
 from prettytable import PrettyTable
 from dotenv import load_dotenv
+
 os.system ("cls")
 
 load_dotenv()
@@ -395,82 +396,88 @@ def login():
         print("| 2. Pembeli                     |")
         print("| 3. Exit                        |")
         print("==================================")
-        pilih = str(input("Masukkan Pilihan : "))
-        if pilih == "1":
-            while True:
-                os.system ("cls")
-                print("==================================")
-                print("|            L O G I N           |")
-                print("==================================")
-                username = str.capitalize(input("Masukkan Username : "))
-                pw = str.lower(pwinput.pwinput("Masukkan Password : "))
-                loading()
-                result = akun_admin.find_one({"admin": username, "pass": pw})
-                if result and result["admin"] == username and result["pass"] == pw:
-                    print("Login Berhasil!")
-                    time.sleep (1)
-                    admin()
-                elif result is None:
-                    print("Login Gagal!")
-                    time.sleep (1)
-                else:
-                    print("Login Gagal!")
-                    time.sleep (1)
+        try:
+            pilih = str(input("Masukkan Pilihan : "))
+            if pilih == "1":
+                while True:
+                    os.system ("cls")
+                    print("==================================")
+                    print("|            L O G I N           |")
+                    print("==================================")
+                    username = str.capitalize(input("Masukkan Username : "))
+                    pw = str.lower(pwinput.pwinput("Masukkan Password : "))
+                    loading()
+                    result = akun_admin.find_one({"admin": username, "pass": pw})
+                    if result and result["admin"] == username and result["pass"] == pw:
+                        print("Login Berhasil!")
+                        time.sleep (1)
+                        admin()
+                    elif result is None:
+                        print("Login Gagal!")
+                        time.sleep (1)
+                    else:
+                        print("Login Gagal!")
+                        time.sleep (1)
 
-        elif pilih == "2":
-            while True:
-                os.system ("cls")
-                print("==================================")
-                print("|         P E M B E L I          |")
-                print("==================================")
-                print("| 1. Login                       |")
-                print("| 2. Registrasi Akun             |")
-                print("==================================")
-                pilih = str(input("Masukkan Pilihan : "))
-                if pilih == "1":
-                    while True:
-                        os.system ("cls")
-                        print("==================================")
-                        print("|            L O G I N           |")
-                        print("==================================")
-                        username = str.capitalize(input("Masukkan Username : "))
-                        pw = str.lower(pwinput.pwinput("Masukkan Password : "))
-                        loading()
-                        result = akun_pembeli.find_one({"pembeli": username, "pass": pw})
-                        if result and result["pembeli"] == username and result["pass"] == pw:
-                            print("Login Berhasil!")
-                            time.sleep (1)
-                            pembeli()
-                        elif result is None:
-                            print("Login Gagal!")
-                            time.sleep (1)
-                        else:
-                            print("Login Gagal!")
-                            time.sleep (1)
-                elif pilih == "2":
+            elif pilih == "2":
+                while True:
+                    os.system ("cls")
+                    print("==================================")
+                    print("|         P E M B E L I          |")
+                    print("==================================")
+                    print("| 1. Login                       |")
+                    print("| 2. Registrasi Akun             |")
+                    print("==================================")
+                    pilih = str(input("Masukkan Pilihan : "))
+                    if pilih == "1":
                         while True:
                             os.system ("cls")
                             print("==================================")
-                            print("|       R E G I S T R A S I      |")
+                            print("|            L O G I N           |")
                             print("==================================")
-                            username_baru = str.capitalize(input("Masukkan username baru: "))
+                            username = str.capitalize(input("Masukkan Username : "))
+                            pw = str.lower(pwinput.pwinput("Masukkan Password : "))
                             loading()
-                            cek = akun_pembeli.find_one({"pembeli": username_baru})
-                            if cek is not None:
-                                print("Nama telah digunakan!")
+                            result = akun_pembeli.find_one({"pembeli": username, "pass": pw})
+                            if result and result["pembeli"] == username and result["pass"] == pw:
+                                print("Login Berhasil!")
+                                time.sleep (1)
+                                pembeli()
+                            elif result is None:
+                                print("Login Gagal!")
                                 time.sleep (1)
                             else:
-                                password_baru = str.lower(input("Masukkan password baru: "))
-                                akun_pembeli.insert_one({"pembeli": username_baru, "pass": password_baru})
-                                print("Registrasi Berhasil!")
+                                print("Login Gagal!")
                                 time.sleep (1)
-                else:
-                    print("Pilihan tidak tersedia!")
-                    time.sleep (1)
-        else:
+                    elif pilih == "2":
+                            while True:
+                                os.system ("cls")
+                                print("==================================")
+                                print("|       R E G I S T R A S I      |")
+                                print("==================================")
+                                username_baru = str.capitalize(input("Masukkan username baru: "))
+                                loading()
+                                cek = akun_pembeli.find_one({"pembeli": username_baru})
+                                if cek is not None:
+                                    print("Nama telah digunakan!")
+                                    time.sleep (1)
+                                else:
+                                    password_baru = str.lower(input("Masukkan password baru: "))
+                                    akun_pembeli.insert_one({"pembeli": username_baru, "pass": password_baru})
+                                    print("Registrasi Berhasil!")
+                                    time.sleep (1)
+                    else:
+                        print("Pilihan tidak tersedia!")
+                        time.sleep (1)
+            else:
+                print("Pilihan tidak tersedia!")
+                time.sleep (1)
+        except KeyboardInterrupt:
             print("Pilihan tidak tersedia!")
             time.sleep (1)
-                
+        except EOFError:
+            print("Pilihan tidak tersedia!")
+            time.sleep (1)
 def admin():
     while True:
         os.system ("cls")
@@ -547,5 +554,6 @@ def pembeli():
         else:
             print ("Pilihan tidak tersedia!")
             time.sleep(1)
-#login
+
 login()
+
